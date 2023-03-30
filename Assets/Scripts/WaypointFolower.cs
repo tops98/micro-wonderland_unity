@@ -8,7 +8,7 @@ using System;
 public class WaypointFolower : MonoBehaviour
 {
     public float minDistacneToWaypoint = 3;
-    public Transform currentWaypoint = null;
+    public Waypoint currentWaypoint = null;
     private GenericCar carController;
 
     
@@ -23,7 +23,7 @@ public class WaypointFolower : MonoBehaviour
     {   
         if(!GetNextWaypoint(carController.steeringCenter,minDistacneToWaypoint))
         {
-            var steerAngle = GetSteeringAngleForTarget(currentWaypoint,carController.steeringCenter);
+            var steerAngle = GetSteeringAngleForTarget(currentWaypoint.transform,carController.steeringCenter);
             carController.SetSteeringAngle(steerAngle);
             carController.Break(0);
             carController.Accelarate(1);
@@ -44,7 +44,7 @@ public class WaypointFolower : MonoBehaviour
         return angle;
     }
 
-    Transform GetClosestWaypoint(Transform steeringPos)
+    Waypoint GetClosestWaypoint(Transform steeringPos)
     {
         var wps = GameObject.FindGameObjectsWithTag("Waypoint");
         Transform closestWp = null;
@@ -63,23 +63,19 @@ public class WaypointFolower : MonoBehaviour
                 closestWp = wp.transform;
             }
         }
-        return closestWp;
+        return closestWp.GetComponent<Waypoint>();
     }
 
     bool GetNextWaypoint(Transform steeringPos, float minDist)
     {
-        var dist = Vector3.Distance(steeringPos.position,currentWaypoint.position);
+        var dist = Vector3.Distance(steeringPos.position,currentWaypoint.transform.position);
         bool stop = false;
         if(dist < minDist)
-        {
-            Waypoint wp = currentWaypoint.GetComponent<Waypoint>();
-            if(wp == null)
-                throw new Exception("No waypoínt commponent attached to current waypoint");
-            
-            if(wp.accessableNeigbor == null)
+        {            
+            if(currentWaypoint.accessableNeigbor == null)
                 stop= true;
             else
-                currentWaypoint = wp.accessableNeigbor.transform;
+                currentWaypoint = currentWaypoint.accessableNeigbor;
         }
 
         

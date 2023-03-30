@@ -5,14 +5,16 @@ using UnityEditor;
 
 public class Waypoint : MonoBehaviour
 {
-    [SerializeField]
-    public List<GameObject> neighbors;
-    public GameObject accessableNeigbor;
+    // public List<Waypoint> neighbors;
+    public List<Waypoint> neighbors;
+    // public GameObject accessableNeigbor;
+    public Waypoint accessableNeigbor;
 
+    [HideInInspector]
     public Mesh arrow;
 
     Waypoint(){
-        neighbors = new List<GameObject>();
+        neighbors = new List<Waypoint>();
     }
     
     void OnDrawGizmos()
@@ -21,7 +23,9 @@ public class Waypoint : MonoBehaviour
         Gizmos.DrawSphere(transform.position,0.5f);
         DrawConnections();
     }
-
+    bool Same(Transform a,Transform b){
+        return a==b;
+    }
      // very inefficent
     private void getArrow()
     {
@@ -40,7 +44,7 @@ public class Waypoint : MonoBehaviour
             return;
         }
 
-        foreach(GameObject currentNeighor in neighbors){
+        foreach(Waypoint currentNeighor in neighbors){
             if(currentNeighor == null){
                 neighbors.Remove(currentNeighor);
                 break;
@@ -74,12 +78,13 @@ public class WaypointInspector: Editor{
             newWaypoint.transform.position = waypoint.transform.position;
             newWaypoint.transform.position += newWaypoint.transform.forward *1;
             newWaypoint.AddComponent<Waypoint>();
-            newWaypoint.GetComponent<Waypoint>().arrow = waypoint.arrow;
+            var wpScript = newWaypoint.GetComponent<Waypoint>();
+            wpScript.arrow = waypoint.arrow;
             
-            if(waypoint.neighbors.Count == 0)
-                waypoint.accessableNeigbor =newWaypoint;
+            if(wpScript.neighbors.Count == 0)
+                wpScript.accessableNeigbor =wpScript;
             
-            waypoint.neighbors.Add(newWaypoint);
+            waypoint.neighbors.Add(wpScript);
             Selection.activeGameObject = newWaypoint;
         }
     }
