@@ -26,7 +26,6 @@ public class RGBCameraPublisher : MonoBehaviour
   {
     // Get Rotate Lidar
     this._camera = GetComponent<FRJ.Sensor.RGBCamera>();
-    this._camera.Init();
 
     // setup ROS
     this._ros = ROSConnection.GetOrCreateInstance();

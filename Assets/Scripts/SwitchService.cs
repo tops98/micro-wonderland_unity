@@ -1,4 +1,4 @@
-using RosMessageTypes.ServoController;
+using RosMessageTypes.MicrowunderlandInterfaces;
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
 using System;
@@ -29,6 +29,7 @@ public class SwitchService : MonoBehaviour
         try
         {
             controller.SetState(request.switch_name,request.state_name);
+            response.status =0;
         }catch(Exception ex)
         {
             response.status = (byte)ReturnErrorCode(ex);

@@ -28,6 +28,7 @@ public class GenericCar : MonoBehaviour
     [SerializeField] private Transform mesh_front_right;
     [SerializeField] private Transform mesh_back_left;
     [SerializeField] private Transform mesh_back_right;
+    [SerializeField] private bool flipWheelRotation = false;
     
     [Space(10)]
     [Header("Car Attributes")]
@@ -42,10 +43,12 @@ public class GenericCar : MonoBehaviour
     private float currentSteeringAngle = 0;
     private float currentAccelaration = 0;
     private float currentBreakingForce = 0;
+    private float wheelRotOffset = 90;
 
-    void Start(){
-        // Prints using the following format - "ATI Radeon X1600 OpenGL Engine" on MacBook Pro running Mac OS X 10.4.8
-        print(SystemInfo.graphicsDeviceName);
+    void Awake(){
+        if(flipWheelRotation){
+            wheelRotOffset = 0;
+        }
     }
 
     void FixedUpdate()
@@ -106,6 +109,6 @@ public class GenericCar : MonoBehaviour
 
         coll.GetWorldPose(out pos,out rot);
         trans.position = pos;
-        trans.rotation = rot* Quaternion.Euler(0, 90, 0);;
+        trans.rotation = rot* Quaternion.Euler(0, wheelRotOffset, 0);;
     }
 }

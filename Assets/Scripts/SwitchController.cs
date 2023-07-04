@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEditor;
+using System.IO;
+using System.Text;
 
 
 [Serializable]
@@ -20,6 +22,7 @@ public class SwitchNotFoundException: Exception
     public SwitchNotFoundException( string switchName)
     : base(String.Format("canot find [{0}] in available switches", switchName)){}
 }
+
 
 public class SwitchController : MonoBehaviour
 {
@@ -51,8 +54,8 @@ public class SwitchController : MonoBehaviour
     public List<InspectorSwitch> switches;
     private Dictionary<string,Switch> switchDict;
     public float forawardToll = 20;
-
-
+    public string _exportPath = "Assets/Exports/Maps/";
+    public string _fileName = "newMap";
 
     public SwitchController(){
         switches = new List<InspectorSwitch>();
@@ -126,21 +129,81 @@ public class SwitchController : MonoBehaviour
 
 [CustomEditor(typeof(SwitchController))]
 public class SwitchControllerInspector: Editor{
-
+     Rect buttonRect;
     public override void OnInspectorGUI()
     {
+        
         var controller = (SwitchController) target;
         
         EditorGUI.BeginChangeCheck();
         base.OnInspectorGUI();
         GUILayout.Space(15);
 
-        if(GUILayout.Button("Find Swithes"))
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+
+        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        buttonStyle.fixedHeight = 60;
+        buttonStyle.fixedWidth = 160;
+        buttonStyle.fontStyle = FontStyle.Bold;
+        buttonStyle.fontSize = 15;
+        
+        if(GUILayout.Button("Find Swithes",buttonStyle))
         {
             controller.switches.Clear();
             GetSwitches(controller);
         }
         
+        // GUILayout.FlexibleSpace();
+        GUILayout.Space(15);
+
+        if(GUILayout.Button(new GUIContent("Export Map","Exports a list of connected switches"),buttonStyle))
+        {
+            ExportMap(controller);
+        }
+
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+    }
+
+    private void ExportMap(SwitchController controller)
+    {   
+        var switches =controller.switches;
+        StringBuilder sb2 = new StringBuilder("---\nnodes:");
+        StringBuilder sb = new StringBuilder();   
+        foreach(var currentSwitch in switches)
+        {
+            sb.AppendFormat("\n  - node_name: {0}\n",currentSwitch.switchName);
+            sb.Append("    trigger_radius: 3\n");
+            sb.AppendFormat("    positions:\n      x: {0}\n      y: {1}"
+            ,currentSwitch.origin.transform.position.x
+            ,currentSwitch.origin.transform.position.z);
+            
+            sb.Append("\n    connections:\n");
+            foreach(var neighbor in currentSwitch.states)
+            {
+                List<Waypoint> visitedWps = new List<Waypoint>();
+                var currentWp = neighbor.link;
+
+                while(!visitedWps.Contains(currentWp))
+                {
+                    visitedWps.Add(currentWp);
+                    if(currentWp.isSwitch)
+                    {
+                        sb.AppendFormat("      - {0}",currentWp.name);
+                        break;
+                    }else
+                    {
+                        if(currentWp.accessableNeigbor == null)
+                            break;
+                        currentWp = currentWp.accessableNeigbor;
+                    }
+                }
+                sb.Append("\n");
+            }
+        }
+        System.IO.Directory.CreateDirectory(controller._exportPath);
+        File.WriteAllText(controller._exportPath+controller._fileName+".yaml",sb2.Append(sb.ToString()).ToString());
     }
 
     void GetSwitches(SwitchController controller)
@@ -195,5 +258,3 @@ public class SwitchControllerInspector: Editor{
         }  
     }
 }
-
-

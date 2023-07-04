@@ -18,10 +18,9 @@ namespace FRJ.Sensor
     private UnityEngine.Camera _camera;
     private Texture2D _texture;
     private Rect _rect;
-
     [HideInInspector] public byte[] data;
 
-    public void Init()
+    public void Awake()
     {
       this._camera  = GetComponent<UnityEngine.Camera>();
       this._texture = new Texture2D(this._width, this._height, TextureFormat.RGB24, false);
@@ -37,6 +36,10 @@ namespace FRJ.Sensor
           this._texture.ReadPixels(this._rect, 0, 0);
           this.data = this._texture.EncodeToJPG(this._quality);
         }
-     }  
+     }
+
+    public Vector2 GetResolution(){
+      return new Vector2(width,height);
+    }  
   }
 }

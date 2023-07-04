@@ -1,0 +1,27 @@
+{
+    "info": {
+        "description": "My COCO dataset",
+        "version": "1.0",
+        "year": 2021,
+        "date_created": "2022-01-01T00:00:00"
+    },
+    "images": [
+        {
+            "id": "i",
+            "width": "width",
+            "height": "height",
+            "file_name": "image_name"
+        }
+    ],
+    "annotations": [
+        {
+            "id": "i",
+            "image_id": "i",
+            "category_id": 1,
+            "bbox": "[0, 0, width, height]",
+            "area": "width * height",
+            "iscrowd": 0
+        }
+    ],
+    "categories": [{"id": 1, "name": "car"},{"id": 2, "name": "nothing"}]
+}

@@ -96,7 +96,16 @@ public class WaypointInspector: Editor{
 
         GUILayout.Space(15);
 
-        if(GUILayout.Button("Create new Waypoint") == true){
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+
+        GUIStyle buttonStyle = new GUIStyle(GUI.skin.button);
+        buttonStyle.fixedHeight = 60;
+        buttonStyle.fixedWidth = 160;
+        buttonStyle.fontStyle = FontStyle.Bold;
+        buttonStyle.fontSize = 15;
+
+        if(GUILayout.Button("New Waypoint",buttonStyle) == true){
             GameObject newWaypoint = new GameObject("waypoint");
             newWaypoint.transform.position = waypoint.transform.position;
             newWaypoint.transform.position += newWaypoint.transform.forward *1;
@@ -111,5 +120,8 @@ public class WaypointInspector: Editor{
             waypoint.neighbors.Add(wpScript);
             Selection.activeGameObject = newWaypoint;
         }
+
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
     }
 }
