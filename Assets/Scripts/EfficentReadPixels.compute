@@ -1,0 +1,15 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel ReadAllPixels
+
+
+// Shadervariablen
+RWStructuredBuffer<float4> colorBuffer; // Structured Buffer zum Speichern der Farbwerte
+Texture2D<float4> sourceTexture; // Eingangs-Render-Texture
+uniform int sourceTextureWidth;
+
+// Compute Shader Kernel
+[numthreads(8, 8, 1)]
+void ReadAllPixels (uint3 id : SV_DispatchThreadID) {
+    float4 color = sourceTexture.Load(int3(id.xy, 0));
+    colorBuffer[id.x + id.y * sourceTextureWidth] = color;
+}

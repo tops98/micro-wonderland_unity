@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 namespace FRJ.Sensor
 {
   [RequireComponent(typeof(UnityEngine.Camera))]
-  public class RGBCamera : MonoBehaviour
+  public class RGBCamera : MonoBehaviour, IRBGCamera
   {
     [SerializeField] private int _width  = 640;
     [SerializeField] private int _height = 480;
@@ -18,7 +18,7 @@ namespace FRJ.Sensor
     private UnityEngine.Camera _camera;
     private Texture2D _texture;
     private Rect _rect;
-    [HideInInspector] public byte[] data;
+    private byte[] _data;
 
     public void Awake()
     {
@@ -34,12 +34,21 @@ namespace FRJ.Sensor
      {
         if (this._texture != null && camera == this._camera) {
           this._texture.ReadPixels(this._rect, 0, 0);
-          this.data = this._texture.EncodeToJPG(this._quality);
+          this._data = this._texture.EncodeToJPG(this._quality);
         }
      }
 
     public Vector2 GetResolution(){
       return new Vector2(width,height);
     }  
+
+    public byte[] GetCompressedImage()
+    {
+      return _data;
+    }
+
+    public float GetScannRate(){
+      return _scanRate;
+    }
   }
 }

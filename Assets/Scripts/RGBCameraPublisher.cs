@@ -7,7 +7,7 @@ using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Sensor;
 
 [RequireComponent(typeof(Camera))]
-[RequireComponent(typeof(FRJ.Sensor.RGBCamera))]
+[RequireComponent(typeof(IRBGCamera))]
 public class RGBCameraPublisher : MonoBehaviour
 {
 
@@ -20,12 +20,12 @@ public class RGBCameraPublisher : MonoBehaviour
   private ROSConnection _ros;
   private CompressedImageMsg _message;    
 
-  private FRJ.Sensor.RGBCamera _camera;
+  private IRBGCamera _camera;
     
   void Start()
   {
     // Get Rotate Lidar
-    this._camera = GetComponent<FRJ.Sensor.RGBCamera>();
+    this._camera = GetComponent<IRBGCamera>();
 
     // setup ROS
     this._ros = ROSConnection.GetOrCreateInstance();
@@ -42,7 +42,7 @@ public class RGBCameraPublisher : MonoBehaviour
     {
         this._timeElapsed += Time.deltaTime;
 
-        if(this._timeElapsed > (1f/this._camera.scanRate))
+        if(this._timeElapsed > (1f/this._camera.GetScannRate()))
         {
             // Update ROS Message
 # if ROS2
@@ -53,7 +53,7 @@ public class RGBCameraPublisher : MonoBehaviour
             uint nanosec = (uint)( (this._timeStamp - sec)*1e+9 );
             this._message.header.stamp.sec = sec;
             this._message.header.stamp.nanosec = nanosec;
-            this._message.data = this._camera.data;
+            this._message.data = this._camera.GetCompressedImage();
             this._ros.Publish(this._topicName, this._message);
 
             // Update time

@@ -8,7 +8,7 @@ using System.IO;
 using System.Text; 
 
 
-[RequireComponent(typeof(FRJ.Sensor.RGBCamera))]
+[RequireComponent(typeof(IRBGCamera))]
 [RequireComponent(typeof(Camera))]
 public class AutoLabel : MonoBehaviour
 {
@@ -41,7 +41,7 @@ public class AutoLabel : MonoBehaviour
     [SerializeField]List<String> _categories;
     private List<KeyValuePair<Collider,int>> _trackedObjects;
     private Camera _cam;
-    private FRJ.Sensor.RGBCamera _rgbCamera;
+    private IRBGCamera _rgbCamera;
     private float _timeElapsed = 0f;
     private int _count = 0;
     private List<Anotation> _annotations = new List<Anotation>();
@@ -49,7 +49,7 @@ public class AutoLabel : MonoBehaviour
 
     void Awake()
     {   
-        _rgbCamera = gameObject.GetComponent<FRJ.Sensor.RGBCamera>();
+        _rgbCamera = gameObject.GetComponent<IRBGCamera>();
         _trackedObjects = GetTrackedObjColliders();
         _cam = gameObject.GetComponent<Camera>();
 
@@ -63,10 +63,10 @@ public class AutoLabel : MonoBehaviour
     {   
         this._timeElapsed += Time.deltaTime;
 
-        if(this._timeElapsed > (1f/this._rgbCamera.scanRate))
+        if(this._timeElapsed > (1f/this._rgbCamera.GetScannRate()))
         {
             _annotations.AddRange(GetBoundingBoxes());
-            _images.Add( ExportImage(_annotations, _rgbCamera.data));
+            _images.Add( ExportImage(_annotations, _rgbCamera.GetCompressedImage()));
             this._timeElapsed = 0;
             _count++;
         }
