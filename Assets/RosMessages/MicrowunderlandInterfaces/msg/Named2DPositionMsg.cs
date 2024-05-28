@@ -13,21 +13,18 @@ namespace RosMessageTypes.MicrowunderlandInterfaces
         public const string k_RosMessageName = "microwunderland_interfaces/Named2DPosition";
         public override string RosMessageName => k_RosMessageName;
 
-        public double x;
-        public double y;
+        public Vector2DMsg position;
         public string name;
 
         public Named2DPositionMsg()
         {
-            this.x = 0.0;
-            this.y = 0.0;
+            this.position = new Vector2DMsg();
             this.name = "";
         }
 
-        public Named2DPositionMsg(double x, double y, string name)
+        public Named2DPositionMsg(Vector2DMsg position, string name)
         {
-            this.x = x;
-            this.y = y;
+            this.position = position;
             this.name = name;
         }
 
@@ -35,23 +32,20 @@ namespace RosMessageTypes.MicrowunderlandInterfaces
 
         private Named2DPositionMsg(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.x);
-            deserializer.Read(out this.y);
+            this.position = Vector2DMsg.Deserialize(deserializer);
             deserializer.Read(out this.name);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.x);
-            serializer.Write(this.y);
+            serializer.Write(this.position);
             serializer.Write(this.name);
         }
 
         public override string ToString()
         {
             return "Named2DPositionMsg: " +
-            "\nx: " + x.ToString() +
-            "\ny: " + y.ToString() +
+            "\nposition: " + position.ToString() +
             "\nname: " + name.ToString();
         }
 

@@ -13,57 +13,47 @@ namespace RosMessageTypes.MicrowunderlandInterfaces
         public const string k_RosMessageName = "microwunderland_interfaces/BoundingBox";
         public override string RosMessageName => k_RosMessageName;
 
-        //  used to send the resoults from a object detector that outputs bounding boxes
-        public Vector2DMsg vec_a;
-        //  if minMax formate vec_a = min; if centerSize format vec_a = center
-        public Vector2DMsg vec_b;
-        //  if minMax formate vec_a = max; if centerSize format vec_a = size
-        public byte format;
-        //  0 equlas minMax; 1 equlas centerSize
-        public string label_name;
-        //  name of the detected object
+        //  BoundingBox msg
+        public Vector2DMsg pos1;
+        public Vector2DMsg pos2;
+        public string label;
 
         public BoundingBoxMsg()
         {
-            this.vec_a = new Vector2DMsg();
-            this.vec_b = new Vector2DMsg();
-            this.format = 0;
-            this.label_name = "";
+            this.pos1 = new Vector2DMsg();
+            this.pos2 = new Vector2DMsg();
+            this.label = "";
         }
 
-        public BoundingBoxMsg(Vector2DMsg vec_a, Vector2DMsg vec_b, byte format, string label_name)
+        public BoundingBoxMsg(Vector2DMsg pos1, Vector2DMsg pos2, string label)
         {
-            this.vec_a = vec_a;
-            this.vec_b = vec_b;
-            this.format = format;
-            this.label_name = label_name;
+            this.pos1 = pos1;
+            this.pos2 = pos2;
+            this.label = label;
         }
 
         public static BoundingBoxMsg Deserialize(MessageDeserializer deserializer) => new BoundingBoxMsg(deserializer);
 
         private BoundingBoxMsg(MessageDeserializer deserializer)
         {
-            this.vec_a = Vector2DMsg.Deserialize(deserializer);
-            this.vec_b = Vector2DMsg.Deserialize(deserializer);
-            deserializer.Read(out this.format);
-            deserializer.Read(out this.label_name);
+            this.pos1 = Vector2DMsg.Deserialize(deserializer);
+            this.pos2 = Vector2DMsg.Deserialize(deserializer);
+            deserializer.Read(out this.label);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.vec_a);
-            serializer.Write(this.vec_b);
-            serializer.Write(this.format);
-            serializer.Write(this.label_name);
+            serializer.Write(this.pos1);
+            serializer.Write(this.pos2);
+            serializer.Write(this.label);
         }
 
         public override string ToString()
         {
             return "BoundingBoxMsg: " +
-            "\nvec_a: " + vec_a.ToString() +
-            "\nvec_b: " + vec_b.ToString() +
-            "\nformat: " + format.ToString() +
-            "\nlabel_name: " + label_name.ToString();
+            "\npos1: " + pos1.ToString() +
+            "\npos2: " + pos2.ToString() +
+            "\nlabel: " + label.ToString();
         }
 
 #if UNITY_EDITOR
